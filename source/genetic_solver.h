@@ -10,8 +10,8 @@ class GeneticSolver {
 public:
     using chromosome_t = std::vector<size_t>;
 
-    GeneticSolver(std::vector<Point>&& coords,
-                  std::vector<size_t>&& demands,
+    GeneticSolver(std::vector<Point> coords,
+                  std::vector<size_t> demands,
                   size_t capacity);
 
     void set_population_size(size_t population_size) { m_population_size = population_size; }
@@ -22,25 +22,22 @@ public:
 private:
     struct PopulationMember {
         PopulationMember() = default;
-        PopulationMember(size_t clients) : chromosome(clients) {
-            std::iota(chromosome.begin(), chromosome.end(), 1); // Заполняем 1, 2, ..., N
-        }
+        PopulationMember(size_t clients);
         chromosome_t chromosome;
         double distance = 0.0;
     };
-private:
-    double compute_distance(const chromosome_t& chromosome) const;
-    chromosome_t crossover(const chromosome_t& chromosome1, const chromosome_t& chromosome2) const;
-    void mutate(chromosome_t& chromosome) const;
-private:
+    static size_t tournament_select(const std::vector<PopulationMember>& population, size_t pop_size, std::mt19937& gen);
+    double compute_distance(chromosome_t& chromosome);
+    chromosome_t crossover(const chromosome_t& parent1, const chromosome_t& parent2) const;
+    void mutate(chromosome_t& chromosome, double rate) const;
+    void two_opt(std::vector<size_t>& route, size_t start, size_t end) const;
     std::vector<Point> m_coords;
     std::vector<size_t> m_demands;
-    size_t m_capacity = 0.0;
-    size_t m_n_clients = m_demands.size() - 1;
+    size_t m_capacity = 0;
+    size_t m_n_clients;
     size_t m_population_size = 50;
     size_t m_n_gen = 200;
     double m_mutation_rate = 0.1;
 
-    chromosome_t random_chromosome;
     inline static std::mt19937 m_gen{std::random_device{}()};
 };

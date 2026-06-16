@@ -1,0 +1,6 @@
+--- Trial 1 ---
+Best distance: 835.97
+Time: 5667 ms
+Route: 26 6 23 28 4 11 8 18 9 22 14 27 29 15 10 25 5 20 24 3 2 7 16 30 13 17 19 31 21 1 12 
+
+Solution within 10.00% of optimum! Stopping.
