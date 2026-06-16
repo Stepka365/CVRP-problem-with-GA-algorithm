@@ -5,21 +5,29 @@
 #include <vector>
 #include <random>
 
+
 class GeneticSolver {
 public:
     using chromosome_t = std::vector<size_t>;
 
     GeneticSolver(std::vector<Point>&& coords,
                   std::vector<size_t>&& demands,
-                  size_t capacity) :
-        m_coords(std::move(coords)),
-        m_demands(std::move(demands)),
-        m_capacity(capacity) {}
+                  size_t capacity);
 
     void set_population_size(size_t population_size) { m_population_size = population_size; }
     void set_n_gen(size_t n_gen) { m_n_gen = n_gen; }
     void set_mutation_rate(double mutation_rate) { m_mutation_rate = mutation_rate; }
+
     std::pair<chromosome_t, double> solve();
+private:
+    struct PopulationMember {
+        PopulationMember() = default;
+        PopulationMember(size_t clients) : chromosome(clients) {
+            std::iota(chromosome.begin(), chromosome.end(), 1); // Заполняем 1, 2, ..., N
+        }
+        chromosome_t chromosome;
+        double distance = 0.0;
+    };
 private:
     double compute_distance(const chromosome_t& chromosome) const;
     chromosome_t crossover(const chromosome_t& chromosome1, const chromosome_t& chromosome2) const;
@@ -33,5 +41,6 @@ private:
     size_t m_n_gen = 200;
     double m_mutation_rate = 0.1;
 
-    std::mt19937 m_gen{std::random_device{}()};
+    chromosome_t random_chromosome;
+    inline static std::mt19937 m_gen{std::random_device{}()};
 };

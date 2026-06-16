@@ -1,6 +1,7 @@
 #include "experimentator.h"
 
 #include "genetic_solver.h"
+#include "parser.h"
 
 #include <ctime>
 #include <iostream>
@@ -8,8 +9,10 @@
 
 void experimentator::run_all_experiments() {
     std::srand(std::time(nullptr));
-    exp1();
-    exp2();
+    // exp1();
+    // exp2();
+    // exp_parse();
+    a_n32_k5();
 }
 
 void experimentator::print_results(const std::vector<size_t>& best, double distance) {
@@ -61,6 +64,27 @@ void experimentator::exp2() {
     task.set_population_size(100);
     task.set_n_gen(1000);
     task.set_mutation_rate(0.1);
+    auto [best, distance] = task.solve();
+    print_results(best, distance);
+}
+
+void experimentator::exp_parse() {
+    CVRPData problem = CVRPParser::parse("A-n32-k5.vrp");
+
+    std::cout << "Nodes: " << problem.dimension << ", Capacity: " << problem.capacity << "\n";
+
+    // Пример вывода: первая точка (Депо) и последняя
+    std::cout << "Depot: x=" << problem.coords[0].x << " demand=" << problem.demands[0] << "\n";
+    std::cout << "Last Node: x=" << problem.coords.back().x << " demand=" << problem.demands.back() << "\n";
+}
+
+void experimentator::a_n32_k5() {
+    CVRPData data = CVRPParser::parse("A-n32-k5.vrp");
+    GeneticSolver task(std::move(data.coords), std::move(data.demands), data.capacity);
+    task.set_population_size(300);
+    task.set_n_gen(1000);
+    task.set_mutation_rate(0.1);
+
     auto [best, distance] = task.solve();
     print_results(best, distance);
 }
